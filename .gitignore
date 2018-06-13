@@ -1,0 +1,7 @@
+# ignore test file
+test.hs
+
+# ignore any non-haskell code
+*.js
+*.py
+
