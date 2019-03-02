@@ -27,9 +27,8 @@ myReverse = foldl (\acc x -> x:acc) []
 
 -- problem 6
 isPalindrome :: (Eq a) => [a] -> Bool
-isPalindrome [] = True
-isPalindrome (x:[]) = True
-isPalindrome (x:xs) = (x == myLast xs) && (isPalindrome $ init xs)
+isPalindrome xs =
+  and $ map (\(x,y) -> x == y) $ zip xs $ reverse xs
 
 -- problem 7
 data NestedList a = Elem a | List [NestedList a] deriving (Eq, Show)

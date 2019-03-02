@@ -5,3 +5,7 @@ test.hs
 *.js
 *.py
 
+# yeah, I don't know why I started a Scheme file
+# I'll just ignore it
+*.scm
+
