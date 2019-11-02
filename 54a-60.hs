@@ -75,6 +75,48 @@ symCbalTrees = (filter symmetric) . cbalTree
 
 -- problem 59
 -- methodology:
+-- the only possible hbalTree of size 0 is Empty
 -- the only possible hbalTree of size 1 is (leaf 'x')
--- we recursively construct until we reach max depth?
+-- otherwise, left and right subtrees must have fixed heights
+hbalTree :: a -> Int -> [Tree a]
+hbalTree _ 0 = [Empty]
+hbalTree x 1 = [leaf x]
+hbalTree x h =
+  let h1 = hbalTree x (h-1)
+      h2 = hbalTree x (h-2)
+  in [Branch x l r | l <- h2, r <- h1] ++
+     [Branch x l r | l <- h1, r <- h1] ++
+     [Branch x l r | l <- h1, r <- h2]
 
+-- problem 60
+-- methodology:
+-- we take the minNodes(h) function from the 122 homework to construct a
+-- maxHeight(n) function
+-- then we use hbalTree(x, h)
+minNodes :: Int -> Int
+minNodes 0 = 0
+minNodes 1 = 1
+minNodes h = 1 + (minNodes $ h-1) + (minNodes $ h-2)
+
+maxHeight :: Int -> Int  -- this is a very inefficient method, but it's simple
+maxHeight 0 = 0
+maxHeight 1 = 1
+maxHeight n =
+  let prev = zip [0..] $ takeWhile (< n) $ map minNodes [0..]
+      pmax = foldl (\((ha, a), (hb, b)) (hx, x) ->
+                     if x + b < n
+                        then ((hb, b), (hx, x))
+                     else ((ha, a), (hb, b))) ((0, 0), (0, 0)) prev
+  in (+ 1) . fst . snd $ pmax
+
+size :: Tree a -> Int
+size Empty = 0
+size (Branch _ left right) = 1 + (size left) + (size right)
+
+hbalTreeNodes :: a -> Int -> [Tree a]  -- again, inefficient but it works!
+hbalTreeNodes _ 0 = [Empty]
+hbalTreeNodes x 1 = [leaf x]
+hbalTreeNodes x n =
+  let heights = [0..(maxHeight n)]
+      candidates = foldl (++) [] $ map (hbalTree x) heights
+  in filter ((== n) . size) candidates
